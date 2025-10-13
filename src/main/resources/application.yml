@@ -7,4 +7,11 @@ spring:
   profiles:
     active: dev
 
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI}
+    register-with-eureka: true
+    fetch-registry: true
+
 # Set spring.cloud.config.server.git.uri,default-label,clone-on-start
