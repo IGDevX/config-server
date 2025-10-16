@@ -1,20 +1,31 @@
 package org.igdevx.configserver.config;
 
-import com.netflix.discovery.EurekaClientConfig;
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.netflix.eureka.EurekaClientConfigBean;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class EurekaConfigOverride {
-    @Bean
-    public EurekaClientConfig eurekaClientConfig() {
-        EurekaClientConfigBean config = new EurekaClientConfigBean();
+
+    private static final Logger log = LoggerFactory.getLogger(EurekaConfigOverride.class);
+
+    private final EurekaClientConfigBean eurekaClientConfig;
+
+    public EurekaConfigOverride(EurekaClientConfigBean eurekaClientConfig) {
+        this.eurekaClientConfig = eurekaClientConfig;
+    }
+
+    @PostConstruct
+    public void overrideEurekaUri() {
         String eurekaUrl = System.getenv("EUREKA_URI");
+
         if (eurekaUrl != null && !eurekaUrl.isEmpty()) {
-            config.getServiceUrl().put("defaultZone", eurekaUrl);
-            System.out.println("Eureka defaultZone set to: " + eurekaUrl);
+            eurekaClientConfig.getServiceUrl().put("defaultZone", eurekaUrl);
+            log.info("✅ EUREKA_URI detected -> defaultZone set to: {}", eurekaUrl);
         } else {
-            System.out.println("EUREKA_URI not set, using default localhost");
+            log.warn("⚠️ EUREKA_URI not set -> using defaultZone from application.yml");
         }
-        return config;
     }
 }
