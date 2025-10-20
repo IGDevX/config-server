@@ -7,9 +7,19 @@ spring:
   profiles:
     active: dev
 
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/IGDevX/marche-conclu-config.git
+          default-label: develop
+          clone-on-start: true
+          force-pull: true
+          timeout: 10
+
 eureka:
   client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
     register-with-eureka: true
     fetch-registry: true
-
-# Set spring.cloud.config.server.git.uri,default-label,clone-on-start
